@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Phan Duy Quang — Database Administrator</title>
+    <meta
+      name="description"
+      content="Phan Duy Quang — Database Administrator (DBA). Production experience across banking, government, and healthcare systems. Stable. Available. Recoverable."
+    />
+    <meta name="author" content="Phan Duy Quang" />
+
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="Phan Duy Quang — Database Administrator"
+    />
+    <meta
+      property="og:description"
+      content="DBA · Banking, government & healthcare systems · Stable. Available. Recoverable."
+    />
+    <meta property="og:image" content="assets/og-image.png" />
+
+    <link rel="icon" href="assets/logo-pq.svg" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ========================= NAVBAR ========================= -->
+    <header class="nav" id="nav">
+      <a href="#hero" class="nav__brand">
+        <img src="assets/logo-pq.svg" alt="PQ" class="nav__logo" />
+        <span class="nav__name">Phan Duy Quang</span>
+      </a>
+
+      <nav class="nav__links" id="navLinks">
+        <a href="#about" data-i18n="nav.about">About</a>
+        <a href="#skills" data-i18n="nav.skills">Skills</a>
+        <a href="#experience" data-i18n="nav.experience">Experience</a>
+        <a href="#projects" data-i18n="nav.projects">Projects</a>
+        <a href="#education" data-i18n="nav.education">Education</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+        <button class="lang-toggle lang-toggle--inmenu" data-lang-toggle>
+          <span class="lang-toggle__opt" data-lang-en>EN</span>
+          <span class="lang-toggle__sep">/</span>
+          <span class="lang-toggle__opt" data-lang-vi>VI</span>
+        </button>
+      </nav>
+
+      <div class="nav__right">
+        <button class="lang-toggle lang-toggle--desktop" data-lang-toggle>
+          <span class="lang-toggle__opt" data-lang-en>EN</span>
+          <span class="lang-toggle__sep">/</span>
+          <span class="lang-toggle__opt" data-lang-vi>VI</span>
+        </button>
+        <button
+          class="nav__burger"
+          id="burger"
+          aria-label="Menu"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ========================= HERO ========================= -->
+      <section class="hero" id="hero">
+        <div class="hero__inner reveal">
+          <p class="hero__eyebrow">
+            <span class="hero__status-dot"></span>
+            <span>PORTFOLIO</span>
+          </p>
+          <h1 class="hero__name">Phan Duy Quang</h1>
+          <p class="hero__role">Database Administrator</p>
+          <p class="hero__tagline" data-i18n="hero.tagline">
+            Stable. Available. Recoverable.
+          </p>
+          <div class="hero__cta">
+            <a
+              href="#projects"
+              class="btn btn--primary"
+              data-i18n="hero.viewProjects"
+              >View Projects</a
+            >
+            <a
+              href="assets/CV_PhanDuyQuang_EN.pdf"
+              download
+              class="btn btn--ghost"
+              data-i18n="hero.downloadCV"
+              >Download CV</a
+            >
+            <a href="#contact" class="btn btn--ghost" data-i18n="hero.contact"
+              >Contact Me</a
+            >
+          </div>
+        </div>
+
+        <div class="hero__photo reveal">
+          <div class="hero__photo-frame">
+            <img src="assets/portrait_hero.png" alt="Phan Duy Quang" />
+            <span class="hero__photo-badge" data-i18n="hero.openToWork"
+              >OPEN TO WORK</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================= ABOUT ========================= -->
+      <section class="section" id="about">
+        <div class="section__head reveal">
+          <span class="section__no">01</span>
+          <h2 class="section__title" data-i18n="about.title">About</h2>
+        </div>
+        <div class="about reveal">
+          <p class="about__lead" data-i18n="about.text">
+            Database Administrator (DBA) with over a year of hands-on experience
+            across banking, securities, and healthcare systems, on both cloud
+            and on-premise environments. I focus on building and operating
+            stable, scalable database systems with high availability —
+            proactively detecting issues early and resolving them promptly to
+            ensure customer satisfaction. I believe a stable system comes not
+            only from technical skill but also from initiative, responsibility,
+            and effective teamwork. That is why I keep a mindset of continuous
+            learning, listening, and self-improvement.
+          </p>
+        </div>
+      </section>
+
+      <!-- ========================= SKILLS (4 card màu) ========================= -->
+      <section class="section" id="skills">
+        <div class="section__head reveal">
+          <span class="section__no">02</span>
+          <h2 class="section__title" data-i18n="skills.title">Skills</h2>
+        </div>
+
+        <div class="skillgrid">
+          <!-- Card 1: xanh dương -->
+          <div class="skillcard skillcard--blue reveal">
+            <div class="skillcard__head">
+              <span class="skillcard__dot"></span>
+              <h3 class="skillcard__name" data-i18n="skills.g1">
+                Database Administration
+              </h3>
+            </div>
+            <div class="skillcard__tags">
+              <span>Oracle Database</span>
+              <span>Patching &amp; Upgrades</span>
+              <span>Data Migration</span>
+              <span>Data Pump</span>
+              <span>Backup/Recovery (RMAN)</span>
+            </div>
+          </div>
+
+          <!-- Card 2: xanh lá -->
+          <div class="skillcard skillcard--green reveal">
+            <div class="skillcard__head">
+              <span class="skillcard__dot"></span>
+              <h3 class="skillcard__name" data-i18n="skills.g2">
+                High Availability &amp; Replication
+              </h3>
+            </div>
+            <div class="skillcard__tags">
+              <span>Oracle RAC</span>
+              <span>Oracle Data Guard</span>
+            </div>
+          </div>
+
+          <!-- Card 3: cam -->
+          <div class="skillcard skillcard--orange reveal">
+            <div class="skillcard__head">
+              <span class="skillcard__dot"></span>
+              <h3 class="skillcard__name" data-i18n="skills.g3">
+                Performance Tuning &amp; Optimization
+              </h3>
+            </div>
+            <div class="skillcard__tags">
+              <span>Waits, Locks &amp; Blocking Sessions</span>
+              <span>Execution Plan Analysis</span>
+              <span>Indexing &amp; Partition Strategies</span>
+              <span>Parameter Tuning</span>
+            </div>
+          </div>
+
+          <!-- Card 4: tím -->
+          <div class="skillcard skillcard--purple reveal">
+            <div class="skillcard__head">
+              <span class="skillcard__dot"></span>
+              <h3 class="skillcard__name" data-i18n="skills.g4">
+                Infrastructure &amp; Automation
+              </h3>
+            </div>
+            <div class="skillcard__tags">
+              <span>Linux Administration</span>
+              <span>AWS Cloud (basic)</span>
+              <span>Shell/Bash Scripting</span>
+              <span>SQL Scripting</span>
+              <span>Crontab Jobs &amp; DB Scheduler</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================= EXPERIENCE ========================= -->
+      <section class="section" id="experience">
+        <div class="section__head reveal">
+          <span class="section__no">03</span>
+          <h2 class="section__title" data-i18n="experience.title">
+            Experience
+          </h2>
+        </div>
+        <div class="exp reveal">
+          <div class="exp__head">
+            <div class="exp__company-wrap">
+              <img src="assets\wecommit.jpg" alt="Wecommit" class="exp__logo" />
+              <div>
+                <h3 class="exp__company">
+                  Wecommit Vietnam Technology Co., Ltd
+                </h3>
+                <p class="exp__role">Oracle Database Administrator</p>
+              </div>
+            </div>
+            <span class="exp__date"
+              >Feb 2025 –
+              <span data-i18n="experience.present">Present</span></span
+            >
+          </div>
+          <ul class="exp__list">
+            <li data-i18n="experience.b1">
+              Deploy Oracle Database systems, including both primary and standby
+              environments.
+            </li>
+            <li data-i18n="experience.b2">
+              Monitor, run routine health-check reports, and resolve incidents
+              across systems.
+            </li>
+            <li data-i18n="experience.b3">
+              Build scheduled backup routines (RMAN, Data Pump).
+            </li>
+            <li data-i18n="experience.b4">
+              Plan database performance optimization (indexing, partitioning,
+              parameter tuning).
+            </li>
+            <li data-i18n="experience.b5">
+              Automate database administration tasks with Shell/Bash, SQL
+              scripts, and cron jobs.
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ========================= PROJECTS (6 card, có logo, không tech badge) ========================= -->
+      <section class="section" id="projects">
+        <div class="section__head reveal">
+          <span class="section__no">04</span>
+          <h2 class="section__title" data-i18n="projects.title">
+            Featured Projects
+          </h2>
+        </div>
+        <div class="projects">
+          <!-- 1. VBSP -->
+          <article class="project reveal">
+            <div class="project__logo" data-overlay="View details">
+              <img src="assets/logo_vbsp.png" alt="VBSP" />
+            </div>
+            <div class="project__top">
+              <h3 class="project__name">VBSP</h3>
+              <span class="project__date"
+                >Sep 2025 – <span data-i18n="proj.current">Current</span></span
+              >
+            </div>
+            <p class="project__sub" data-i18n="projects.p1sub">
+              Vietnam Bank for Social Policies
+            </p>
+            <ul class="project__list">
+              <li data-i18n="projects.p1b1">
+                Contributed to the Core Banking Oracle Database upgrade from 11g
+                to 19c (Sep 2025).
+              </li>
+              <li data-i18n="projects.p1b2">
+                Helped design the database migration plan; performed
+                backup/restore and Transportable Tablespaces tasks.
+              </li>
+              <li data-i18n="projects.p1b3">
+                Monitored and reported system status daily; supported incident
+                resolution.
+              </li>
+            </ul>
+          </article>
+
+          <!-- 2. HNX -->
+          <article class="project reveal">
+            <div class="project__logo" data-overlay="View details">
+              <img src="assets/logo_hnx.png" alt="HNX" />
+            </div>
+            <div class="project__top">
+              <h3 class="project__name">HNX</h3>
+              <span class="project__date"
+                >Sep 2025 – <span data-i18n="proj.current2">Current</span></span
+              >
+            </div>
+            <p class="project__sub" data-i18n="projects.p2sub">
+              Hanoi Stock Exchange
+            </p>
+            <ul class="project__list">
+              <li data-i18n="projects.p2b1">
+                Deployed Oracle Data Guard standby systems.
+              </li>
+              <li data-i18n="projects.p2b2">
+                Monitored, reported, and handled incidents across the system.
+              </li>
+              <li data-i18n="projects.p2b3">
+                Proposed SQL query and system parameter optimizations.
+              </li>
+            </ul>
+          </article>
+
+          <!-- 3. IPVN -->
+          <article class="project reveal">
+            <div class="project__logo" data-overlay="View details">
+              <img src="assets/logo_ipvn.png" alt="IPVN" />
+            </div>
+            <div class="project__top">
+              <h3 class="project__name">IPVN</h3>
+              <span class="project__date">Nov 2025 – Dec 2025</span>
+            </div>
+            <p class="project__sub" data-i18n="projects.p3sub">
+              Intellectual Property Office of Vietnam
+            </p>
+            <ul class="project__list">
+              <li data-i18n="projects.p3b1">
+                Deployed Oracle Database systems along with Data Guard standby
+                environments.
+              </li>
+              <li data-i18n="projects.p3b2">
+                Built scheduled backup routines using RMAN and Data Pump.
+              </li>
+              <li data-i18n="projects.p3b3">
+                Supported incident resolution and system parameter tuning.
+              </li>
+            </ul>
+          </article>
+
+          <!-- 4. Vinatti -->
+          <article class="project reveal">
+            <div class="project__logo" data-overlay="View details">
+              <img src="assets/logo_vinatti.png" alt="Vinatti" />
+            </div>
+            <div class="project__top">
+              <h3 class="project__name">Vinatti</h3>
+              <span class="project__date">Apr 2026</span>
+            </div>
+            <p class="project__sub" data-i18n="projects.p4sub">
+              Payment &amp; Digital Services
+            </p>
+            <ul class="project__list">
+              <li data-i18n="projects.p4b1">
+                Deployed Oracle Data Guard standby systems on AIX.
+              </li>
+              <li data-i18n="projects.p4b2">
+                Supported switchover operations between primary and standby
+                environments.
+              </li>
+            </ul>
+          </article>
+
+          <!-- 5. OneNet -->
+          <article class="project reveal">
+            <div class="project__logo" data-overlay="View details">
+              <img src="assets/logo_onenet.png" alt="OneNet" />
+            </div>
+            <div class="project__top">
+              <h3 class="project__name">OneNet</h3>
+              <span class="project__date"
+                >Nov 2025 – <span data-i18n="proj.current3">Current</span></span
+              >
+            </div>
+            <p class="project__sub" data-i18n="projects.p5sub">
+              Hospital Database Systems
+            </p>
+            <ul class="project__list">
+              <li data-i18n="projects.p5b1">
+                Monitored and supported database operations for multiple
+                hospital systems.
+              </li>
+              <li data-i18n="projects.p5b2">
+                Built scheduled data backup routines.
+              </li>
+              <li data-i18n="projects.p5b3">
+                Proposed SQL query and system parameter optimizations.
+              </li>
+            </ul>
+          </article>
+
+          <!-- 6. Bệnh viện Nguyễn Đình Chiểu -->
+          <article class="project reveal">
+            <div class="project__logo" data-overlay="View details">
+              <img src="assets/logo_ndc.png" alt="Nguyen Dinh Chieu Hospital" />
+            </div>
+            <div class="project__top">
+              <h3 class="project__name" data-i18n="projects.p6name">
+                Nguyen Dinh Chieu Hospital
+              </h3>
+              <span class="project__date">Sep 2025 – Dec 2025</span>
+            </div>
+            <p class="project__sub" data-i18n="projects.p6sub">Ben Tre</p>
+            <ul class="project__list">
+              <li data-i18n="projects.p6b1">
+                Operated and administered Oracle Database, keeping primary and
+                standby systems stable.
+              </li>
+              <li data-i18n="projects.p6b2">
+                Built scheduled backup routines using RMAN and Data Pump.
+              </li>
+              <li data-i18n="projects.p6b3">
+                Supported routine maintenance and incident resolution.
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ========================= EDUCATION ========================= -->
+      <section class="section" id="education">
+        <div class="section__head reveal">
+          <span class="section__no">05</span>
+          <h2 class="section__title" data-i18n="education.title">
+            Education &amp; Certifications
+          </h2>
+        </div>
+        <div class="edu">
+          <div class="edu__card reveal">
+            <span class="edu__tag" data-i18n="education.eduTag">Education</span>
+            <h3 class="edu__title" data-i18n="education.school">
+              Hanoi Open University
+            </h3>
+            <p class="edu__meta" data-i18n="education.major">
+              Information Technology
+            </p>
+            <p class="edu__date">Oct 2021 – Oct 2025</p>
+          </div>
+          <div class="edu__card reveal">
+            <span class="edu__tag" data-i18n="education.certTag"
+              >Certification</span
+            >
+            <h3 class="edu__title">TOEIC 750</h3>
+            <p class="edu__meta">Listening &amp; Reading</p>
+            <p class="edu__date">2025</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================= CONTACT (5 ô bấm được) ========================= -->
+      <section class="section" id="contact">
+        <div class="section__head reveal">
+          <span class="section__no">06</span>
+          <h2 class="section__title" data-i18n="contact.title">Contact</h2>
+        </div>
+        <div class="contact reveal">
+          <p class="contact__lead" data-i18n="contact.lead">
+            Open to DBA roles and freelance engagements. Let's talk about
+            keeping your databases reliable.
+          </p>
+
+          <!-- Hàng trên: liên hệ trực tiếp -->
+          <div class="contact__grid contact__grid--primary">
+            <a class="contact__item" href="tel:+84856726686">
+              <span class="contact__label" data-i18n="contact.phone"
+                >Phone</span
+              >
+              <span class="contact__value">+84 856 726 686</span>
+            </a>
+            <a
+              class="contact__item"
+              href="mailto:working.duyquangphan@gmail.com"
+            >
+              <span class="contact__label">Email</span>
+              <span class="contact__value">working.duyquangphan@gmail.com</span>
+            </a>
+            <a
+              class="contact__item"
+              href="https://zalo.me/0856726686"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="contact__label">Zalo</span>
+              <span class="contact__value">0856 726 686</span>
+            </a>
+            <a
+              class="contact__item"
+              href="https://t.me/guanq_d"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="contact__label">Telegram</span>
+              <span class="contact__value">@guanq_d</span>
+            </a>
+          </div>
+          <!-- Hàng dưới: mạng xã hội -->
+          <div class="contact__grid contact__grid--social">
+            <a
+              class="contact__item"
+              href="https://www.facebook.com/duy.quang.97192"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="contact__label">Facebook</span>
+              <span class="contact__value">Duy Quang</span>
+            </a>
+            <a
+              class="contact__item"
+              href="https://www.instagram.com/guanq_d/"
+              target="_blank"
+              rel="noopener"
+            >
+              <span class="contact__label">Instagram</span>
+              <span class="contact__value">@guanq_d</span>
+            </a>
+          </div>
+
+          <a
+            href="assets/CV_PhanDuyQuang_EN.pdf"
+            download
+            class="btn btn--primary btn--lg contact__cv"
+            data-i18n="contact.downloadCV"
+            >Download CV (PDF)</a
+          >
+        </div>
+      </section>
+    </main>
+
+    <!-- ========================= FOOTER ========================= -->
+    <footer class="footer">
+      <p class="footer__line">
+        <span class="footer__prompt">$</span>
+        <span>Phan Duy Quang · Database Administrator · Hanoi, Vietnam</span>
+      </p>
+      <p class="footer__year">© <span id="year"></span></p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
