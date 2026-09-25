@@ -100,6 +100,8 @@ const content = {
       "Open to DBA roles and freelance engagements. Let's talk about keeping your databases reliable.",
     "contact.phone": "Phone",
     "contact.downloadCV": "Download CV (PDF)",
+
+    "cv.view": "View online",
   },
 
   vi: {
@@ -193,6 +195,8 @@ const content = {
       "Sẵn sàng cho các vị trí DBA và cơ hội freelance. Hãy trao đổi về việc giữ cho hệ thống dữ liệu của bạn luôn tin cậy.",
     "contact.phone": "Điện thoại",
     "contact.downloadCV": "Tải CV (PDF)",
+
+    "cv.view": "Xem trực tuyến",
   },
 };
 
@@ -221,6 +225,43 @@ function applyLang(lang) {
   document
     .querySelectorAll("[data-lang-vi]")
     .forEach((s) => s.classList.toggle("is-active", lang === "vi"));
+
+  renderAbout(lang);
+  document.querySelectorAll(".contact__lead").forEach((el) => {
+    el.innerHTML = dict["contact.lead"]
+      .split(/(?<=\.)\s+/)
+      .map((line) => `<span class="line">${line}</span>`)
+      .join("");
+  });
+  setCvLang(lang);
+  syncTagline(lang);
+}
+
+/* ---------- About: câu đầu làm lead, câu cuối làm trích dẫn, tô từ khóa ---------- */
+const aboutHighlights = {
+  en: ["banking, securities, and healthcare", "cloud", "on-premise", "high availability"],
+  vi: ["ngân hàng, chứng khoán và bệnh viện", "cloud", "on-premise", "tính sẵn sàng cao"],
+};
+function highlight(text, lang) {
+  aboutHighlights[lang].forEach((word) => {
+    // gạch nối không ngắt dòng (on-premise)
+    text = text.replace(word, `<mark>${word.replace("-", "‑")}</mark>`);
+  });
+  return text;
+}
+function renderAbout(lang) {
+  const sentences = content[lang]["about.text"].split(/(?<=\.)\s+/);
+  const [lead, body, ...rest] = sentences;
+  document.getElementById("aboutText").innerHTML =
+    `<p class="about__lead">${highlight(lead, lang)}</p>` +
+    `<div class="about__body"><p>${highlight(body, lang)}</p>` +
+    `<p class="about__quote">${rest.join(" ")}</p></div>`;
+}
+
+/* ---------- Nút "Xem trực tuyến" CV theo ngôn ngữ trang ---------- */
+function setCvLang(lang) {
+  const file = `assets/CV_PhanDuyQuang_${lang.toUpperCase()}.pdf`;
+  document.querySelectorAll("[data-cv-view]").forEach((a) => (a.href = file));
 }
 
 document.querySelectorAll("[data-lang-toggle]").forEach((btn) => {
@@ -244,12 +285,46 @@ navLinks.querySelectorAll("a").forEach((link) => {
   });
 });
 
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+/* ---------- Kiểu xuất hiện cho từng khối ---------- */
+function setReveal(selector, kind) {
+  document.querySelectorAll(selector).forEach((el, i) => {
+    const k = typeof kind === "function" ? kind(i) : kind;
+    if (k) el.classList.add("reveal", "reveal--" + k);
+  });
+}
+setReveal(".section__head", "left");
+setReveal(".about__text", "left");
+setReveal(".skillcard", (i) => (i % 2 ? "right" : "left"));
+setReveal(".project, .exp", "flip");
+setReveal(".edu__card", (i) => (i % 2 ? "right" : "left"));
+setReveal(".contact__item", "zoom");
+/* ---------- Reveal khi cuộn (card trong lưới hiện lần lượt) ---------- */
+document
+  .querySelectorAll(".skillgrid, .projects, .edu, .contact__grid")
+  .forEach((grid) => {
+    [...grid.children].forEach((el, i) => {
+      el.style.setProperty("--rd", i * 90 + "ms");
+    });
+  });
+document.querySelectorAll(".skillcard__tags, .exp__list").forEach((list) => {
+  [...list.children].forEach((el, i) => el.style.setProperty("--ti", i));
+});
+
 const observer = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) {
-        entry.target.classList.add("is-visible");
-        observer.unobserve(entry.target);
+        const el = entry.target;
+        el.classList.add("is-visible");
+        observer.unobserve(el);
+        // hiện xong -> chuyển sang transition nhanh cho hover/tilt
+        setTimeout(
+          () => el.classList.add("is-settled"),
+          900 + (parseInt(el.style.getPropertyValue("--rd")) || 0),
+        );
       }
     });
   },
@@ -259,4 +334,381 @@ document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
+/* ---------- Hero: tên, chức danh, tagline gõ lần lượt như đang code ---------- */
+const heroName = document.querySelector(".hero__name");
+const heroRole = document.querySelector(".hero__role");
+const heroTagline = document.querySelector(".hero__tagline");
+const typeCaret = document.createElement("span");
+typeCaret.className = "type-caret";
+typeCaret.setAttribute("aria-hidden", "true");
+let typingState = reduceMotion ? "done" : "idle";
+
+// dựng sẵn từng ký tự (ẩn) để chữ hiện ra không làm xô lệch bố cục
+function prepType(el, text) {
+  el.classList.add("type");
+  el.setAttribute("aria-label", text);
+  el.innerHTML = `<span aria-hidden="true">${[...text]
+    .map((c) => `<span class="ch">${c}</span>`)
+    .join("")}</span>`;
+}
+function syncTagline(lang) {
+  const text = content[lang]["hero.tagline"];
+  if (typingState === "done") {
+    heroTagline.textContent = text;
+    if (!reduceMotion) heroTagline.appendChild(typeCaret);
+  } else {
+    prepType(heroTagline, text);
+  }
+}
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+async function typeEl(el, speed) {
+  el.firstElementChild.prepend(typeCaret);
+  for (let i = 0; ; i++) {
+    const chars = el.querySelectorAll(".ch");
+    if (i >= chars.length) break;
+    chars[i].classList.add("on");
+    chars[i].after(typeCaret);
+    await wait(chars[i].textContent === " " ? speed * 2 : speed + Math.random() * speed * 0.6);
+  }
+}
+async function runHeroTyping() {
+  if (typingState !== "idle") return;
+  typingState = "typing";
+  typeCaret.classList.add("is-typing");
+  await typeEl(heroName, 80);
+  await wait(250);
+  await typeEl(heroRole, 42);
+  await wait(200);
+  await typeEl(heroTagline, 40);
+  typeCaret.classList.remove("is-typing");
+  typingState = "done";
+}
+if (!reduceMotion) {
+  prepType(heroName, heroName.textContent.trim());
+  prepType(heroRole, heroRole.textContent.trim());
+}
+
 applyLang("vi");
+
+/* ---------- Màn chờ (loader) ---------- */
+const loader = document.getElementById("loader");
+const loaderBar = document.getElementById("loaderBar");
+const loaderPct = document.getElementById("loaderPct");
+const LOADER_MIN = 1900;
+let pageLoaded = document.readyState === "complete";
+let loaderFinished = false;
+const loaderStart = performance.now();
+
+window.addEventListener("load", () => (pageLoaded = true));
+setTimeout(() => (pageLoaded = true), 5000); // an toàn nếu ảnh tải chậm
+
+function finishLoader() {
+  if (loaderFinished) return;
+  loaderFinished = true;
+  loaderBar.style.width = "100%";
+  loaderPct.textContent = "100%";
+  loader.classList.add("is-done");
+  document.body.classList.remove("is-loading");
+  document.body.classList.add("is-ready");
+  setTimeout(runHeroTyping, 700);
+  setTimeout(() => loader.remove(), 1200);
+}
+
+function loaderTick(now) {
+  if (loaderFinished) return;
+  const p = Math.min(1, (now - loaderStart) / LOADER_MIN);
+  const eased = 1 - Math.pow(1 - p, 3);
+  const shown = pageLoaded ? eased : Math.min(eased, 0.9);
+  loaderBar.style.width = (shown * 100).toFixed(1) + "%";
+  loaderPct.textContent = Math.round(shown * 100) + "%";
+  if (shown >= 1) setTimeout(finishLoader, 250);
+  else requestAnimationFrame(loaderTick);
+}
+
+if (reduceMotion) finishLoader();
+else {
+  requestAnimationFrame(loaderTick);
+  loader.addEventListener("click", finishLoader); // bấm để bỏ qua
+}
+
+/* ---------- Nav: tiến độ cuộn, thu gọn, nút lên đầu trang ---------- */
+const nav = document.getElementById("nav");
+const scrollProgress = document.getElementById("scrollProgress");
+const toTop = document.getElementById("toTop");
+const toTopProgress = document.getElementById("toTopProgress");
+const RING = 2 * Math.PI * 22;
+
+function onScroll() {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  const p = max > 0 ? window.scrollY / max : 0;
+  scrollProgress.style.transform = `scaleX(${p})`;
+  toTopProgress.style.strokeDashoffset = RING * (1 - p);
+  nav.classList.toggle("is-scrolled", window.scrollY > 20);
+  toTop.classList.toggle("is-shown", window.scrollY > 600);
+}
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+/* ---------- Link menu sáng theo section đang xem ---------- */
+const navMap = new Map();
+navLinks.querySelectorAll('a[href^="#"]').forEach((a) => {
+  navMap.set(a.getAttribute("href").slice(1), a);
+});
+const sectionObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      navMap.forEach((a) => a.classList.remove("is-active"));
+      const link = navMap.get(entry.target.id);
+      if (link) link.classList.add("is-active");
+    });
+  },
+  { rootMargin: "-45% 0px -50% 0px" },
+);
+document.querySelectorAll("main section[id]").forEach((s) => sectionObserver.observe(s));
+
+/* ---------- Card: spotlight theo chuột + nghiêng 3D ---------- */
+if (finePointer) {
+  document
+    .querySelectorAll(".skillcard, .project, .contact__item, .edu__card, .exp")
+    .forEach((el) => {
+      el.classList.add("spot");
+      const tilt = el.matches(".skillcard, .project") && !reduceMotion;
+      el.addEventListener("pointermove", (e) => {
+        const r = el.getBoundingClientRect();
+        const x = e.clientX - r.left;
+        const y = e.clientY - r.top;
+        el.style.setProperty("--mx", x + "px");
+        el.style.setProperty("--my", y + "px");
+        if (tilt) {
+          const rx = (y / r.height - 0.5) * -6;
+          const ry = (x / r.width - 0.5) * 8;
+          el.style.transform = `perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+        }
+      });
+      if (tilt) el.addEventListener("pointerleave", () => (el.style.transform = ""));
+    });
+}
+
+/* ---------- Nền động: sao + mạng dữ liệu + sao băng ---------- */
+const sky = document.getElementById("sky");
+const ctx = sky.getContext("2d");
+let W = 0, H = 0, stars = [], nodes = [], meteors = [];
+const mouse = { x: -9999, y: -9999 };
+
+function resizeSky() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  W = window.innerWidth;
+  H = window.innerHeight;
+  sky.width = W * dpr;
+  sky.height = H * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const starCount = Math.min(220, Math.round((W * H) / 7000));
+  stars = Array.from({ length: starCount }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    r: Math.random() * 1.1 + 0.3,
+    depth: Math.random() * 0.8 + 0.2,
+    tw: Math.random() * 2 + 0.5,
+    ph: Math.random() * Math.PI * 2,
+  }));
+  const nodeCount = W < 700 ? 16 : 34;
+  nodes = Array.from({ length: nodeCount }, () => ({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.25,
+    vy: (Math.random() - 0.5) * 0.25,
+  }));
+}
+window.addEventListener("resize", resizeSky);
+window.addEventListener("pointermove", (e) => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+document.addEventListener("pointerleave", () => (mouse.x = mouse.y = -9999));
+resizeSky();
+
+let nextMeteor = 3;
+function drawSky(s) {
+  ctx.clearRect(0, 0, W, H);
+  const sy = window.scrollY;
+  const mx = mouse.x > -1 ? (mouse.x - W / 2) : 0;
+
+  // sao: nhấp nháy + trôi theo cuộn (parallax)
+  for (const st of stars) {
+    const y = (((st.y - sy * st.depth * 0.12) % H) + H) % H;
+    const x = st.x - mx * st.depth * 0.012;
+    const a = 0.25 + 0.6 * Math.abs(Math.sin(s * st.tw + st.ph)) * st.depth;
+    ctx.fillStyle = `rgba(231,236,245,${a.toFixed(3)})`;
+    ctx.beginPath();
+    ctx.arc(x, y, st.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // mạng dữ liệu: các node nối với nhau và với con trỏ
+  for (const n of nodes) {
+    if (!reduceMotion) {
+      n.x += n.vx;
+      n.y += n.vy;
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+    }
+  }
+  ctx.lineWidth = 1;
+  for (let i = 0; i < nodes.length; i++) {
+    const a = nodes[i];
+    for (let j = i + 1; j < nodes.length; j++) {
+      const b = nodes[j];
+      const d = Math.hypot(a.x - b.x, a.y - b.y);
+      if (d < 150) {
+        ctx.strokeStyle = `rgba(56,225,176,${((1 - d / 150) * 0.16).toFixed(3)})`;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+      }
+    }
+    const dm = Math.hypot(a.x - mouse.x, a.y - mouse.y);
+    if (dm < 190) {
+      ctx.strokeStyle = `rgba(91,157,255,${((1 - dm / 190) * 0.4).toFixed(3)})`;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(mouse.x, mouse.y);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "rgba(56,225,176,.55)";
+    ctx.beginPath();
+    ctx.arc(a.x, a.y, 1.6, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // sao băng thỉnh thoảng
+  if (!reduceMotion && s > nextMeteor) {
+    nextMeteor = s + 4 + Math.random() * 5;
+    meteors.push({ x: Math.random() * W * 0.8 + W * 0.2, y: Math.random() * H * 0.4, life: 1 });
+  }
+  meteors = meteors.filter((m) => m.life > 0);
+  for (const m of meteors) {
+    m.x -= 9;
+    m.y += 4.5;
+    m.life -= 0.018;
+    const g = ctx.createLinearGradient(m.x, m.y, m.x + 90, m.y - 45);
+    g.addColorStop(0, `rgba(231,236,245,${m.life.toFixed(3)})`);
+    g.addColorStop(1, "rgba(231,236,245,0)");
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(m.x, m.y);
+    ctx.lineTo(m.x + 90, m.y - 45);
+    ctx.stroke();
+  }
+}
+
+/* ---------- 2 đĩa bay lượn quanh trang và bắn nhau ---------- */
+// mỗi đĩa bay theo quỹ đạo Lissajous riêng -> phủ đều màn hình, ít khi chồng lên nhau
+const ufos = [
+  { el: document.getElementById("ufoA"), fx: 0.11, fy: 0.17, px: 0, py: 1.3, color: "56,225,176" },
+  { el: document.getElementById("ufoB"), fx: 0.083, fy: 0.13, px: 2.6, py: 4.4, color: "255,120,190" },
+].map((u) => ({ ...u, x: 0, y: 0, hitUntil: 0, beaming: false }));
+let bolts = [];
+let sparks = [];
+let nextShot = 4;
+let shooter = 0;
+
+function moveUfos(s) {
+  ufos.forEach((u, k) => {
+    const size = u.el.offsetWidth;
+    u.x = W * (0.5 + 0.42 * Math.sin(s * u.fx + u.px));
+    u.y = H * (0.5 + 0.36 * Math.sin(s * u.fy + u.py)) + Math.sin(s * 2.1 + k) * 6;
+    const tilt = Math.cos(s * u.fx + u.px) * 12;
+    // trúng đạn: rung nhẹ + loé sáng
+    const hit = s < u.hitUntil;
+    const jx = hit ? (Math.random() - 0.5) * 6 : 0;
+    const jy = hit ? (Math.random() - 0.5) * 6 : 0;
+    u.el.style.transform = `translate3d(${u.x - size / 2 + jx}px, ${u.y - size / 2 + jy}px, 0) rotate(${tilt}deg)`;
+    u.el.classList.toggle("is-hit", hit);
+    const beam = (s + k * 6) % 14 > 11;
+    if (beam !== u.beaming) {
+      u.beaming = beam;
+      u.el.classList.toggle("is-beaming", beam);
+    }
+  });
+}
+
+function fire(s) {
+  const a = ufos[shooter];
+  const b = ufos[1 - shooter];
+  shooter = 1 - shooter;
+  if (Math.hypot(b.x - a.x, b.y - a.y) < 90) return;
+  // bắn hơi đón đầu hướng bay của đối thủ
+  const tx = b.x + Math.cos(s * b.fx + b.px) * 30;
+  const ang = Math.atan2(b.y - a.y, tx - a.x);
+  const speed = 11;
+  bolts.push({
+    x: a.x, y: a.y,
+    vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed,
+    color: a.color, target: b, life: 1,
+  });
+  sparks.push({ x: a.x, y: a.y, vx: 0, vy: 0, life: 0.5, r: 7, color: a.color }); // chớp nòng
+}
+
+function drawCombat(s) {
+  if (reduceMotion || !document.body.classList.contains("is-ready")) return;
+  if (s > nextShot) {
+    fire(s);
+    nextShot = s + 1.1 + Math.random() * 1.8;
+  }
+  ctx.lineCap = "round";
+  bolts = bolts.filter((b) => b.life > 0);
+  for (const b of bolts) {
+    b.x += b.vx;
+    b.y += b.vy;
+    b.life -= 0.012;
+    const t = b.target;
+    if (Math.hypot(t.x - b.x, t.y - b.y) < 26) {
+      b.life = 0;
+      t.hitUntil = s + 0.35;
+      for (let i = 0; i < 16; i++) {
+        const a = Math.random() * Math.PI * 2;
+        const v = 1 + Math.random() * 3.5;
+        sparks.push({ x: b.x, y: b.y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: 1, r: 1.2 + Math.random() * 1.6, color: b.color });
+      }
+      continue;
+    }
+    const tailX = b.x - b.vx * 2.4;
+    const tailY = b.y - b.vy * 2.4;
+    const g = ctx.createLinearGradient(b.x, b.y, tailX, tailY);
+    g.addColorStop(0, `rgba(255,255,255,${b.life.toFixed(2)})`);
+    g.addColorStop(0.3, `rgba(${b.color},${b.life.toFixed(2)})`);
+    g.addColorStop(1, `rgba(${b.color},0)`);
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(b.x, b.y);
+    ctx.lineTo(tailX, tailY);
+    ctx.stroke();
+  }
+  sparks = sparks.filter((p) => p.life > 0);
+  for (const p of sparks) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vx *= 0.94;
+    p.vy *= 0.94;
+    p.life -= 0.035;
+    ctx.fillStyle = `rgba(${p.color},${Math.max(0, p.life).toFixed(2)})`;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r * (0.5 + p.life * 0.5), 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* ---------- Vòng lặp chung ---------- */
+function frame(now) {
+  const s = now / 1000;
+  drawSky(s);
+  moveUfos(s);
+  drawCombat(s);
+  if (!reduceMotion) requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);

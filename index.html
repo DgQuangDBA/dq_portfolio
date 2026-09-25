@@ -31,11 +31,77 @@
       rel="stylesheet"
     />
 
+    <script>document.documentElement.classList.add("js");</script>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body class="is-loading">
+    <!-- ========================= LOADER (màn chờ) ========================= -->
+    <div class="loader" id="loader" aria-hidden="true">
+      <div class="loader__panel loader__panel--top"></div>
+      <div class="loader__panel loader__panel--bottom"></div>
+      <div class="loader__core">
+        <div class="loader__ring">
+          <img src="assets/logo-pq.svg" alt="" class="loader__logo" />
+        </div>
+        <div class="loader__term">
+          <p style="--d: 0"><span class="loader__prompt">$</span> sqlplus / as sysdba</p>
+          <p style="--d: 1">SQL&gt; STARTUP;</p>
+          <p style="--d: 2">Database mounted.</p>
+          <p style="--d: 3" class="loader__ok">Database opened.</p>
+        </div>
+        <div class="loader__bar"><span id="loaderBar"></span></div>
+        <div class="loader__meta">
+          <span>PORTFOLIO</span><span id="loaderPct">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================= NỀN ĐỘNG: sao + mạng dữ liệu + đĩa bay ========================= -->
+    <canvas class="sky" id="sky" aria-hidden="true"></canvas>
+    <div class="ufo" id="ufoA" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="ufoBeam" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#38E1B0" stop-opacity=".5" />
+            <stop offset="1" stop-color="#38E1B0" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="ufoBody" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#b9c7e2" />
+            <stop offset="1" stop-color="#34435f" />
+          </linearGradient>
+          <radialGradient id="ufoDome" cx=".4" cy=".35" r=".75">
+            <stop offset="0" stop-color="#d6fff2" stop-opacity=".95" />
+            <stop offset="1" stop-color="#38E1B0" stop-opacity=".2" />
+          </radialGradient>
+        </defs>
+        <path class="ufo__beam" d="M46 36 L74 36 L108 120 L12 120 Z" fill="url(#ufoBeam)" />
+        <path d="M42 30 A18 18 0 0 1 78 30 Z" fill="url(#ufoDome)" />
+        <ellipse cx="60" cy="32" rx="46" ry="9" fill="url(#ufoBody)" />
+        <ellipse cx="60" cy="29.5" rx="40" ry="3.5" fill="#dfe8f8" opacity=".35" />
+        <g class="ufo__lights">
+          <circle cx="28" cy="34" r="2.2" /><circle cx="44" cy="36" r="2.2" />
+          <circle cx="60" cy="37" r="2.2" /><circle cx="76" cy="36" r="2.2" />
+          <circle cx="92" cy="34" r="2.2" />
+        </g>
+      </svg>
+    </div>
+    <div class="ufo ufo--b" id="ufoB" aria-hidden="true">
+      <svg viewBox="0 0 120 120">
+        <path class="ufo__beam" d="M46 36 L74 36 L108 120 L12 120 Z" fill="url(#ufoBeam)" />
+        <path d="M42 30 A18 18 0 0 1 78 30 Z" fill="url(#ufoDome)" />
+        <ellipse cx="60" cy="32" rx="46" ry="9" fill="url(#ufoBody)" />
+        <ellipse cx="60" cy="29.5" rx="40" ry="3.5" fill="#dfe8f8" opacity=".35" />
+        <g class="ufo__lights">
+          <circle cx="28" cy="34" r="2.2" /><circle cx="44" cy="36" r="2.2" />
+          <circle cx="60" cy="37" r="2.2" /><circle cx="76" cy="36" r="2.2" />
+          <circle cx="92" cy="34" r="2.2" />
+        </g>
+      </svg>
+    </div>
+
     <!-- ========================= NAVBAR ========================= -->
     <header class="nav" id="nav">
+      <span class="nav__progress" id="scrollProgress"></span>
       <a href="#hero" class="nav__brand">
         <img src="assets/logo-pq.svg" alt="PQ" class="nav__logo" />
         <span class="nav__name">Phan Duy Quang</span>
@@ -75,8 +141,8 @@
     <main>
       <!-- ========================= HERO ========================= -->
       <section class="hero" id="hero">
-        <div class="hero__inner reveal">
-          <p class="hero__eyebrow">
+        <div class="hero__inner">
+          <p class="hero__eyebrow intro" style="--d: 0">
             <span class="hero__status-dot"></span>
             <span>PORTFOLIO</span>
           </p>
@@ -85,7 +151,7 @@
           <p class="hero__tagline" data-i18n="hero.tagline">
             Stable. Available. Recoverable.
           </p>
-          <div class="hero__cta">
+          <div class="hero__cta intro" style="--d: 6">
             <a
               href="#projects"
               class="btn btn--primary"
@@ -105,7 +171,7 @@
           </div>
         </div>
 
-        <div class="hero__photo reveal">
+        <div class="hero__photo intro" style="--d: 2">
           <div class="hero__photo-frame">
             <img src="assets/portrait_hero.png" alt="Phan Duy Quang" />
             <span class="hero__photo-badge" data-i18n="hero.openToWork"
@@ -113,6 +179,7 @@
             >
           </div>
         </div>
+        <a href="#about" class="hero__scroll" aria-label="Scroll down"><span></span></a>
       </section>
 
       <!-- ========================= ABOUT ========================= -->
@@ -121,8 +188,9 @@
           <span class="section__no">01</span>
           <h2 class="section__title" data-i18n="about.title">About</h2>
         </div>
-        <div class="about reveal">
-          <p class="about__lead" data-i18n="about.text">
+        <div class="about">
+          <div class="about__text reveal" id="aboutText">
+          <p class="about__lead">
             Database Administrator (DBA) with over a year of hands-on experience
             across banking, securities, and healthcare systems, on both cloud
             and on-premise environments. I focus on building and operating
@@ -133,6 +201,7 @@
             and effective teamwork. That is why I keep a mindset of continuous
             learning, listening, and self-improvement.
           </p>
+          </div>
         </div>
       </section>
 
@@ -147,7 +216,7 @@
           <!-- Card 1: xanh dương -->
           <div class="skillcard skillcard--blue reveal">
             <div class="skillcard__head">
-              <span class="skillcard__dot"></span>
+              <span class="skillcard__icon"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
               <h3 class="skillcard__name" data-i18n="skills.g1">
                 Database Administration
               </h3>
@@ -164,7 +233,7 @@
           <!-- Card 2: xanh lá -->
           <div class="skillcard skillcard--green reveal">
             <div class="skillcard__head">
-              <span class="skillcard__dot"></span>
+              <span class="skillcard__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="13" width="7" height="7" rx="1.5"/><path d="M10 7.5h4a3 3 0 0 1 3 3V13"/><path d="M14 16.5h-4a3 3 0 0 1-3-3V11"/></svg></span>
               <h3 class="skillcard__name" data-i18n="skills.g2">
                 High Availability &amp; Replication
               </h3>
@@ -178,7 +247,7 @@
           <!-- Card 3: cam -->
           <div class="skillcard skillcard--orange reveal">
             <div class="skillcard__head">
-              <span class="skillcard__dot"></span>
+              <span class="skillcard__icon"><svg viewBox="0 0 24 24"><path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4-6"/><circle cx="12" cy="18" r="1.3"/></svg></span>
               <h3 class="skillcard__name" data-i18n="skills.g3">
                 Performance Tuning &amp; Optimization
               </h3>
@@ -194,7 +263,7 @@
           <!-- Card 4: tím -->
           <div class="skillcard skillcard--purple reveal">
             <div class="skillcard__head">
-              <span class="skillcard__dot"></span>
+              <span class="skillcard__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3"/><path d="M13 15h4"/></svg></span>
               <h3 class="skillcard__name" data-i18n="skills.g4">
                 Infrastructure &amp; Automation
               </h3>
@@ -269,12 +338,13 @@
         <div class="projects">
           <!-- 1. VBSP -->
           <article class="project reveal">
-            <div class="project__logo" data-overlay="View details">
+            <div class="project__logo">
+              <span class="project__no">01</span>
               <img src="assets/logo_vbsp.png" alt="VBSP" />
             </div>
             <div class="project__top">
               <h3 class="project__name">VBSP</h3>
-              <span class="project__date"
+              <span class="project__date project__date--live"
                 >Sep 2025 – <span data-i18n="proj.current">Current</span></span
               >
             </div>
@@ -299,12 +369,13 @@
 
           <!-- 2. HNX -->
           <article class="project reveal">
-            <div class="project__logo" data-overlay="View details">
+            <div class="project__logo">
+              <span class="project__no">02</span>
               <img src="assets/logo_hnx.png" alt="HNX" />
             </div>
             <div class="project__top">
               <h3 class="project__name">HNX</h3>
-              <span class="project__date"
+              <span class="project__date project__date--live"
                 >Sep 2025 – <span data-i18n="proj.current2">Current</span></span
               >
             </div>
@@ -326,7 +397,8 @@
 
           <!-- 3. IPVN -->
           <article class="project reveal">
-            <div class="project__logo" data-overlay="View details">
+            <div class="project__logo">
+              <span class="project__no">03</span>
               <img src="assets/logo_ipvn.png" alt="IPVN" />
             </div>
             <div class="project__top">
@@ -352,7 +424,8 @@
 
           <!-- 4. Vinatti -->
           <article class="project reveal">
-            <div class="project__logo" data-overlay="View details">
+            <div class="project__logo">
+              <span class="project__no">04</span>
               <img src="assets/logo_vinatti.png" alt="Vinatti" />
             </div>
             <div class="project__top">
@@ -375,12 +448,13 @@
 
           <!-- 5. OneNet -->
           <article class="project reveal">
-            <div class="project__logo" data-overlay="View details">
+            <div class="project__logo">
+              <span class="project__no">05</span>
               <img src="assets/logo_onenet.png" alt="OneNet" />
             </div>
             <div class="project__top">
               <h3 class="project__name">OneNet</h3>
-              <span class="project__date"
+              <span class="project__date project__date--live"
                 >Nov 2025 – <span data-i18n="proj.current3">Current</span></span
               >
             </div>
@@ -403,7 +477,8 @@
 
           <!-- 6. Bệnh viện Nguyễn Đình Chiểu -->
           <article class="project reveal">
-            <div class="project__logo" data-overlay="View details">
+            <div class="project__logo">
+              <span class="project__no">06</span>
               <img src="assets/logo_ndc.png" alt="Nguyen Dinh Chieu Hospital" />
             </div>
             <div class="project__top">
@@ -471,9 +546,10 @@
             keeping your databases reliable.
           </p>
 
-          <!-- Hàng trên: liên hệ trực tiếp -->
-          <div class="contact__grid contact__grid--primary">
+          <!-- 6 ô liên hệ kích thước bằng nhau -->
+          <div class="contact__grid">
             <a class="contact__item" href="tel:+84856726686">
+              <span class="contact__icon"><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
               <span class="contact__label" data-i18n="contact.phone"
                 >Phone</span
               >
@@ -483,8 +559,9 @@
               class="contact__item"
               href="mailto:working.duyquangphan@gmail.com"
             >
+              <span class="contact__icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></span>
               <span class="contact__label">Email</span>
-              <span class="contact__value">working.duyquangphan@gmail.com</span>
+              <span class="contact__value contact__value--email">working.duyquangphan@<wbr />gmail.com</span>
             </a>
             <a
               class="contact__item"
@@ -492,6 +569,7 @@
               target="_blank"
               rel="noopener"
             >
+              <span class="contact__icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.3-4.7A8.5 8.5 0 1 1 21 11.5z"/></svg></span>
               <span class="contact__label">Zalo</span>
               <span class="contact__value">0856 726 686</span>
             </a>
@@ -501,18 +579,17 @@
               target="_blank"
               rel="noopener"
             >
+              <span class="contact__icon"><svg viewBox="0 0 24 24"><path d="M21 4L3 11l6 2 2 6 3-4 5 4 2-15z"/><path d="M9 13l8-6"/></svg></span>
               <span class="contact__label">Telegram</span>
               <span class="contact__value">@guanq_d</span>
             </a>
-          </div>
-          <!-- Hàng dưới: mạng xã hội -->
-          <div class="contact__grid contact__grid--social">
             <a
               class="contact__item"
               href="https://www.facebook.com/duy.quang.97192"
               target="_blank"
               rel="noopener"
             >
+              <span class="contact__icon"><svg viewBox="0 0 24 24"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg></span>
               <span class="contact__label">Facebook</span>
               <span class="contact__value">Duy Quang</span>
             </a>
@@ -522,18 +599,19 @@
               target="_blank"
               rel="noopener"
             >
+              <span class="contact__icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8"/></svg></span>
               <span class="contact__label">Instagram</span>
               <span class="contact__value">@guanq_d</span>
             </a>
           </div>
-
-          <a
-            href="assets/CV_PhanDuyQuang_EN.pdf"
-            download
-            class="btn btn--primary btn--lg contact__cv"
-            data-i18n="contact.downloadCV"
-            >Download CV (PDF)</a
-          >
+          <!-- Tải CV -->
+          <div class="contact__cv">
+            <a href="assets/CV_PhanDuyQuang_EN.pdf" download data-cv-download class="btn btn--primary">
+              <svg class="btn__icon" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+              <span data-i18n="contact.downloadCV">Download CV (PDF)</span>
+            </a>
+            <a href="assets/CV_PhanDuyQuang_EN.pdf" data-cv-view target="_blank" rel="noopener" class="btn btn--ghost" data-i18n="cv.view">View online</a>
+          </div>
         </div>
       </section>
     </main>
@@ -546,6 +624,15 @@
       </p>
       <p class="footer__year">© <span id="year"></span></p>
     </footer>
+
+    <!-- Nút lên đầu trang (vòng tròn = tiến độ cuộn) -->
+    <a href="#hero" class="to-top" id="toTop" aria-label="Back to top">
+      <svg class="to-top__ring" viewBox="0 0 48 48">
+        <circle cx="24" cy="24" r="22" />
+        <circle cx="24" cy="24" r="22" id="toTopProgress" />
+      </svg>
+      <svg class="to-top__arrow" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+    </a>
 
     <script src="script.js"></script>
   </body>
