@@ -493,6 +493,8 @@ if (finePointer) {
 /* ---------- Nền động: sao + mạng dữ liệu + sao băng ---------- */
 const sky = document.getElementById("sky");
 const ctx = sky.getContext("2d");
+const fx = document.getElementById("fx");
+const fxCtx = fx.getContext("2d");
 let W = 0, H = 0, stars = [], nodes = [], meteors = [];
 const mouse = { x: -9999, y: -9999 };
 
@@ -500,9 +502,10 @@ function resizeSky() {
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   W = window.innerWidth;
   H = window.innerHeight;
-  sky.width = W * dpr;
-  sky.height = H * dpr;
+  sky.width = fx.width = W * dpr;
+  sky.height = fx.height = H * dpr;
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  fxCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const starCount = Math.min(220, Math.round((W * H) / 7000));
   stars = Array.from({ length: starCount }, () => ({
@@ -654,12 +657,13 @@ function fire(s) {
 }
 
 function drawCombat(s) {
+  fxCtx.clearRect(0, 0, W, H);
   if (reduceMotion || !document.body.classList.contains("is-ready")) return;
   if (s > nextShot) {
     fire(s);
     nextShot = s + 1.1 + Math.random() * 1.8;
   }
-  ctx.lineCap = "round";
+  fxCtx.lineCap = "round";
   bolts = bolts.filter((b) => b.life > 0);
   for (const b of bolts) {
     b.x += b.vx;
@@ -678,16 +682,16 @@ function drawCombat(s) {
     }
     const tailX = b.x - b.vx * 2.4;
     const tailY = b.y - b.vy * 2.4;
-    const g = ctx.createLinearGradient(b.x, b.y, tailX, tailY);
+    const g = fxCtx.createLinearGradient(b.x, b.y, tailX, tailY);
     g.addColorStop(0, `rgba(255,255,255,${b.life.toFixed(2)})`);
     g.addColorStop(0.3, `rgba(${b.color},${b.life.toFixed(2)})`);
     g.addColorStop(1, `rgba(${b.color},0)`);
-    ctx.strokeStyle = g;
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(b.x, b.y);
-    ctx.lineTo(tailX, tailY);
-    ctx.stroke();
+    fxCtx.strokeStyle = g;
+    fxCtx.lineWidth = 3;
+    fxCtx.beginPath();
+    fxCtx.moveTo(b.x, b.y);
+    fxCtx.lineTo(tailX, tailY);
+    fxCtx.stroke();
   }
   sparks = sparks.filter((p) => p.life > 0);
   for (const p of sparks) {
@@ -696,10 +700,10 @@ function drawCombat(s) {
     p.vx *= 0.94;
     p.vy *= 0.94;
     p.life -= 0.035;
-    ctx.fillStyle = `rgba(${p.color},${Math.max(0, p.life).toFixed(2)})`;
-    ctx.beginPath();
-    ctx.arc(p.x, p.y, p.r * (0.5 + p.life * 0.5), 0, Math.PI * 2);
-    ctx.fill();
+    fxCtx.fillStyle = `rgba(${p.color},${Math.max(0, p.life).toFixed(2)})`;
+    fxCtx.beginPath();
+    fxCtx.arc(p.x, p.y, p.r * (0.5 + p.life * 0.5), 0, Math.PI * 2);
+    fxCtx.fill();
   }
 }
 

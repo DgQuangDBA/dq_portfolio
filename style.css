@@ -44,11 +44,12 @@ body::before {
   background:
     radial-gradient(720px 420px at 82% -5%, rgba(91,157,255,.10), transparent 60%),
     radial-gradient(620px 420px at 0% 0%, rgba(56,225,176,.07), transparent 55%);
-  pointer-events: none; z-index: 0;
+  pointer-events: none; z-index: -1;
 }
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
-main, .nav, .footer { position: relative; z-index: 1; }
+main, .nav, .footer { position: relative; }
+.nav { z-index: 20; }
 
 /* ============ NAVBAR (chữ to hơn) ============ */
 .nav {
@@ -425,7 +426,7 @@ main, .nav, .footer { position: relative; z-index: 1; }
   transition: opacity .7s ease, transform .8s cubic-bezier(.2,.8,.2,1);
   transition-delay: var(--rd, 0ms);
 }
-.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.reveal.is-visible { opacity: 1; transform: none; }
 /* sau khi hiện xong: trả lại transition nhanh cho hover / tilt */
 .reveal.is-settled {
   transition: transform .2s ease, border-color .2s ease, box-shadow .3s ease;
@@ -575,12 +576,12 @@ a:focus-visible, button:focus-visible {
 .sky {
   position: fixed; inset: 0;
   width: 100%; height: 100%;
-  pointer-events: none; z-index: 0;
+  pointer-events: none; z-index: -1;
 }
 .ufo {
   position: fixed; top: 0; left: 0;
   width: 92px; height: 92px;
-  pointer-events: none; z-index: 0;
+  pointer-events: none; z-index: 1;
   opacity: 0;
   transition: opacity 1.2s ease;
   will-change: transform;
@@ -602,6 +603,20 @@ a:focus-visible, button:focus-visible {
 .ufo svg { transition: filter .15s ease; }
 .ufo.is-hit svg { filter: brightness(2.2) drop-shadow(0 0 16px rgba(56,225,176,.9)); }
 .ufo--b.is-hit svg { filter: hue-rotate(150deg) brightness(2.2) drop-shadow(0 0 16px rgba(255,120,190,.9)); }
+
+/* lớp hiển thị: sao (0) < nền card < đĩa bay + laser (1) < chữ/ảnh (2) */
+.fx {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; z-index: 1;
+}
+main :where(h1, h2, h3, p, li, span, a.btn, button, .hero__photo-frame, .exp__logo) {
+  position: relative; z-index: 2;
+}
+/* khối intro ở hero (animation tạo lớp riêng) -> nâng cả khối lên trên đĩa bay */
+main .intro { position: relative; z-index: 2; }
+/* card đang hover/nghiêng: nổi cả khối lên trên đĩa bay */
+main :where(.skillcard, .project, .contact__item, .edu__card, .exp):hover { z-index: 3; }
 
 /* ============ NAV: tiến độ cuộn, link active, thu gọn khi cuộn ============ */
 .nav { transition: padding .3s ease, background .3s ease, box-shadow .3s ease; }
@@ -638,7 +653,7 @@ a:focus-visible, button:focus-visible {
   animation: introUp .9s cubic-bezier(.2,.8,.2,1) forwards;
   animation-delay: calc(var(--d, 0) * 110ms + 250ms);
 }
-@keyframes introUp { to { opacity: 1; transform: none; filter: blur(0); } }
+@keyframes introUp { to { opacity: 1; transform: none; filter: none; } }
 
 .hero__name .word { display: inline-block; white-space: nowrap; }
 .hero__name { text-shadow: 0 0 40px rgba(91,157,255,.18); }
@@ -660,13 +675,13 @@ a:focus-visible, button:focus-visible {
 }
 
 /* ============ SPOTLIGHT theo chuột trên card ============ */
-.spot { position: relative; isolation: isolate; }
+.spot { position: relative; }
 .spot::before {
   content: ""; position: absolute; inset: 0;
   border-radius: inherit;
   background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(56,225,176,.09), transparent 45%);
   opacity: 0; transition: opacity .3s ease;
-  pointer-events: none; z-index: -1;
+  pointer-events: none; z-index: 1;
 }
 .spot:hover::before { opacity: 1; }
 .skillcard:hover, .project:hover { box-shadow: 0 24px 50px -28px rgba(0,0,0,.9); }
@@ -725,8 +740,8 @@ a:focus-visible, button:focus-visible {
 @media (max-width: 680px) {
   .nav__links a::after { display: none; }
   .nav__links a.is-active { color: var(--accent); }
-  .ufo { width: 58px; height: 58px; }
-  .ufo--b { width: 52px; height: 52px; }
+  .ufo { width: 66px; height: 66px; }
+  .ufo--b { width: 58px; height: 58px; }
   .to-top { right: 16px; bottom: 16px; width: 46px; height: 46px; }
 }
 
